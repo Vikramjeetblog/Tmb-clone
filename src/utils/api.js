@@ -8,14 +8,19 @@ const headers = {
 };
 
 export const fetchDataFromApi = async (url, params) => {
-    try {
-        const { data } = await axios.get(BASE_URL + url, {
-            headers,
-            params,
-        });
-        return data;
-    } catch (err) {
-        console.log(err);
-        return err;
+  try {
+    const { data } = await axios.get(BASE_URL + url, {
+      headers,
+      params,
+      timeout: 5000,
+    });
+    return data;
+  } catch (err) {
+    console.error("API Error:", err.message || err);
+    if (err.response) {
+      console.error("Status:", err.response.status);
+      console.error("Data:", err.response.data);
     }
+    return null;
+  }
 };
