@@ -1,39 +1,21 @@
 const BASE_URL = "https://api.themoviedb.org/3";
-const TMDB_TOKEN = process.env.REACT_APP_TMDB_TOKEN;
+const API_KEY = "da58b03878c6e349442dcb55f029b1bc"; // TMDB API Key
 
-// Log token once
-console.log("%cTMDB TOKEN:", "color: #4CAF50; font-weight: bold;", TMDB_TOKEN);
-
-// Native fetch with timeout + logging
+// Native fetch with logging
 const fetchTMDB = async (url, params = {}) => {
   console.log("%c[TMDB] Calling:", "color: #2196F3; font-weight: bold;", url);
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => {
-    console.warn("%c[TMDB] Request timed out!", "color: orange; font-weight: bold;");
-    controller.abort();
-  }, 15000);
-
   try {
-    // Build full URL
+    // Build full URL with API key
     const finalUrl = new URL(BASE_URL + url);
-
+    finalUrl.searchParams.append("api_key", API_KEY);
     Object.keys(params).forEach((key) => {
       finalUrl.searchParams.append(key, params[key]);
     });
 
     console.log("%c[TMDB] Full URL:", "color: #03A9F4", finalUrl.toString());
 
-    const response = await fetch(finalUrl, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${TMDB_TOKEN}`,
-        "Content-Type": "application/json",
-      },
-      signal: controller.signal,
-    });
-
-    clearTimeout(timeout);
+    const response = await fetch(finalUrl, { method: "GET" });
 
     console.log("%c[TMDB] Status:", "color: purple", response.status);
 
@@ -47,7 +29,6 @@ const fetchTMDB = async (url, params = {}) => {
     return data;
 
   } catch (err) {
-    clearTimeout(timeout);
     console.error("%c[TMDB FETCH ERROR]:", "color: red; font-weight: bold;", err.message);
     return null;
   }
