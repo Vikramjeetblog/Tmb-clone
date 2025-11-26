@@ -1,18 +1,16 @@
 import React, { useState } from "react";
-import ContentWrapper from '../../../component/contentWrapper/ContentWrapper';
-import SwitchTabs from '../../../component/switchTabs/SwitchTabs';
-import useFetch from '../../../hooks/useFetch';
-import Carousel from '../../../component/carousel/Carousel';
+import ContentWrapper from "../../../component/contentWrapper/ContentWrapper";
+import SwitchTabs from "../../../component/switchTabs/SwitchTabs";
+import Carousel from "../../../component/carousel/Carousel";
 
-
-const TopRated = () => {
+const TopRated = ({ movieData, tvData }) => {
     const [endpoint, setEndpoint] = useState("movie");
-
-    const { data, loading } = useFetch(`/${endpoint}/top_rated`);
 
     const onTabChange = (tab) => {
         setEndpoint(tab === "Movies" ? "movie" : "tv");
     };
+
+    const activeData = endpoint === "movie" ? movieData : tvData;
 
     return (
         <div className="carouselSection">
@@ -23,9 +21,10 @@ const TopRated = () => {
                     onTabChange={onTabChange}
                 />
             </ContentWrapper>
+
             <Carousel
-                data={data?.results}
-                loading={loading}
+                data={activeData?.results}
+                loading={!activeData}
                 endpoint={endpoint}
             />
         </div>
